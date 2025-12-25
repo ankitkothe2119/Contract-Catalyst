@@ -160,6 +160,7 @@ export function ContractCalculator() {
               {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 3, maximumFractionDigits: 3 }).format(result)}
             </p>
             <p className="text-sm text-muted-foreground pt-2">{resultInWords(result)}</p>
+            <p className="text-sm text-muted-foreground">Not Applicable</p>
           </CardContent>
         </Card>
       )}
