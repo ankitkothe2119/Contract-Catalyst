@@ -171,9 +171,9 @@ export function ContractCalculator() {
           <CardContent className="space-y-4">
              <div className="flex items-center justify-between">
               <p className="text-4xl font-bold text-primary font-headline">
-                {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 3, maximumFractionDigits: 3 }).format(result)}
+                {new Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 3, maximumFractionDigits: 3 }).format(result)}
               </p>
-              <Button variant="ghost" size="icon" onClick={() => handleCopy(new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 3, maximumFractionDigits: 3 }).format(result), 'value')}>
+              <Button variant="ghost" size="icon" onClick={() => handleCopy(new Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 3, maximumFractionDigits: 3 }).format(result), 'value')}>
                 <Clipboard className="h-5 w-5" />
                 <span className="sr-only">Copy value</span>
               </Button>
