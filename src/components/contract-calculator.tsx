@@ -75,7 +75,8 @@ export function ContractCalculator() {
     const integerWords = toWords(Number(integerPart));
     const fractionalWords = fractionalPart.split('').map(digit => toWords(Number(digit))).join(' ');
     
-    return `${integerWords} point ${fractionalWords}`;
+    const words = `${integerWords} point ${fractionalWords}`;
+    return words.charAt(0).toUpperCase() + words.slice(1);
   }
 
   return (
