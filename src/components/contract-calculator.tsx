@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { DollarSign, Calendar, CalendarClock, TrendingUp } from "lucide-react";
+import { toWords } from 'number-to-words';
 
 import { Button } from "@/components/ui/button";
 import {
@@ -65,6 +66,18 @@ export function ContractCalculator() {
     const finalAnswer = (value2 / 100) + value1;
 
     setResult(finalAnswer);
+  }
+
+  const resultInWords = (num: number | null) => {
+    if (num === null) return '';
+    const fixedNum = num.toFixed(3);
+    const [integerPart, fractionalPart] = fixedNum.split('.');
+    const integerWords = toWords(Number(integerPart));
+    const fractionalWords = fractionalPart.split('').map(digit => toWords(Number(digit))).join(' ');
+    
+    const capitalized = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+    return `${capitalized(integerWords)} and ${fractionalWords} dollars`;
   }
 
   return (
@@ -143,10 +156,11 @@ export function ContractCalculator() {
             <CardTitle className="font-headline text-xl">Adjusted Monthly Value</CardTitle>
             <CardDescription>This is the calculated value based on your inputs.</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-2">
             <p className="text-4xl font-bold text-primary font-headline">
-              {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(result)}
+              {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 3, maximumFractionDigits: 3 }).format(result)}
             </p>
+            <p className="text-sm text-muted-foreground pt-2">{resultInWords(result)}</p>
           </CardContent>
         </Card>
       )}
