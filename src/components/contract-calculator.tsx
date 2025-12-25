@@ -4,7 +4,7 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { DollarSign, Calendar, CalendarClock, TrendingUp } from "lucide-react";
+import { DollarSign, Calendar, CalendarClock, TrendingUp, Clipboard } from "lucide-react";
 import { toWords } from 'number-to-words';
 
 import { Button } from "@/components/ui/button";
@@ -25,6 +25,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
 
 const currentYear = new Date().getFullYear();
 
@@ -41,6 +42,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 export function ContractCalculator() {
   const [result, setResult] = useState<number | null>(null);
+  const { toast } = useToast();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -78,6 +80,23 @@ export function ContractCalculator() {
     const words = `${integerWords} point ${fractionalWords}`;
     return words.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   }
+
+  const handleCopy = () => {
+    if (result === null) return;
+
+    const textToCopy = [
+      `Adjusted Monthly Value: ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 3, maximumFractionDigits: 3 }).format(result)}`,
+      `In Words: ${resultInWords(result)}`,
+      'Not Applicable'
+    ].join('\n');
+
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      toast({
+        title: "Copied to clipboard!",
+        description: "The result details have been copied.",
+      });
+    });
+  };
 
   return (
     <div className="w-full max-w-md">
@@ -152,8 +171,16 @@ export function ContractCalculator() {
       {result !== null && (
         <Card className="mt-6 w-full bg-primary/10 border-primary/20 animate-in fade-in zoom-in-95">
           <CardHeader>
-            <CardTitle className="font-headline text-xl">Adjusted Monthly Value</CardTitle>
-            <CardDescription>This is the calculated value based on your inputs.</CardDescription>
+            <div className="flex justify-between items-start">
+              <div>
+                <CardTitle className="font-headline text-xl">Adjusted Monthly Value</CardTitle>
+                <CardDescription>This is the calculated value based on your inputs.</CardDescription>
+              </div>
+              <Button variant="ghost" size="icon" onClick={handleCopy}>
+                <Clipboard className="h-5 w-5" />
+                <span className="sr-only">Copy results</span>
+              </Button>
+            </div>
           </CardHeader>
           <CardContent className="space-y-2">
             <p className="text-4xl font-bold text-primary font-headline">
