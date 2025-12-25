@@ -81,19 +81,11 @@ export function ContractCalculator() {
     return words.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   }
 
-  const handleCopy = () => {
-    if (result === null) return;
-
-    const textToCopy = [
-      `Adjusted Monthly Value: ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 3, maximumFractionDigits: 3 }).format(result)}`,
-      `In Words: ${resultInWords(result)}`,
-      'Not Applicable'
-    ].join('\n');
-
+  const handleCopy = (textToCopy: string, fieldName: string) => {
     navigator.clipboard.writeText(textToCopy).then(() => {
       toast({
         title: "Copied to clipboard!",
-        description: "The result details have been copied.",
+        description: `The ${fieldName} has been copied.`,
       });
     });
   };
@@ -171,23 +163,35 @@ export function ContractCalculator() {
       {result !== null && (
         <Card className="mt-6 w-full bg-primary/10 border-primary/20 animate-in fade-in zoom-in-95">
           <CardHeader>
-            <div className="flex justify-between items-start">
               <div>
                 <CardTitle className="font-headline text-xl">Adjusted Monthly Value</CardTitle>
                 <CardDescription>This is the calculated value based on your inputs.</CardDescription>
               </div>
-              <Button variant="ghost" size="icon" onClick={handleCopy}>
+          </CardHeader>
+          <CardContent className="space-y-4">
+             <div className="flex items-center justify-between">
+              <p className="text-4xl font-bold text-primary font-headline">
+                {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 3, maximumFractionDigits: 3 }).format(result)}
+              </p>
+              <Button variant="ghost" size="icon" onClick={() => handleCopy(new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 3, maximumFractionDigits: 3 }).format(result), 'value')}>
                 <Clipboard className="h-5 w-5" />
-                <span className="sr-only">Copy results</span>
+                <span className="sr-only">Copy value</span>
               </Button>
             </div>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <p className="text-4xl font-bold text-primary font-headline">
-              {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 3, maximumFractionDigits: 3 }).format(result)}
-            </p>
-            <p className="text-sm text-muted-foreground pt-2">{resultInWords(result)}</p>
-            <p className="text-sm text-muted-foreground">Not Applicable</p>
+             <div className="flex items-center justify-between">
+              <p className="text-sm text-muted-foreground">{resultInWords(result)}</p>
+              <Button variant="ghost" size="icon" onClick={() => handleCopy(resultInWords(result)!, 'value in words')}>
+                <Clipboard className="h-5 w-5" />
+                <span className="sr-only">Copy value in words</span>
+              </Button>
+            </div>
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-muted-foreground">Not Applicable</p>
+              <Button variant="ghost" size="icon" onClick={() => handleCopy('Not Applicable', 'text')}>
+                <Clipboard className="h-5 w-5" />
+                <span className="sr-only">Copy Not Applicable</span>
+              </Button>
+            </div>
           </CardContent>
         </Card>
       )}
